@@ -13,3 +13,4 @@ class UserInfoForm(forms.Form):
     email = forms.EmailField(label='电子邮箱', max_length=50)
     phone = forms.IntegerField(label='电话')
     captcha = CaptchaField(label='验证码')
+    phonecode = forms.IntegerField(label='短信验证码')

@@ -15,7 +15,7 @@ class UserInfo(models.Model):
     phone = models.IntegerField(verbose_name='电话',unique=True)
     lastlogintime = models.DateTimeField(verbose_name='上次登录时间',blank=True,null=True)
     registertime = models.DateTimeField(verbose_name='注册时间',auto_now=True)
-    registercode = models.IntegerField(verbose_name='短信验证码',null=True)
+    phonecode = models.IntegerField(verbose_name='短信验证码',null=True)
     def __str__(self):
         return self.username
     class Meta:
