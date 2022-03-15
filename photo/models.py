@@ -12,9 +12,10 @@ class UserInfo(models.Model):
     sex = models.CharField(choices=sex_choice,default='男',max_length=20)
     age = models.IntegerField(verbose_name='年龄')
     email = models.EmailField(verbose_name='电子邮箱',max_length=50)
-    phone = models.IntegerField(verbose_name='电话')
+    phone = models.IntegerField(verbose_name='电话',unique=True)
     lastlogintime = models.DateTimeField(verbose_name='上次登录时间',blank=True,null=True)
     registertime = models.DateTimeField(verbose_name='注册时间',auto_now=True)
+    registercode = models.IntegerField(verbose_name='短信验证码',null=True)
     def __str__(self):
         return self.username
     class Meta:
