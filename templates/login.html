@@ -8,8 +8,11 @@
     <form action="" method="post">
         {% csrf_token %}
         <table>
-            <input type="text" name="username"  value="用户名">
-            <input type="text"  name="password"  value="密码">
+{#            <input type="text" name="username"  value="用户名">#}
+{#            <input type="text"  name="password"  value="密码">#}
+            {{ u.username }}
+            {{ u.password }}
+            {{ u.captcha }}
             <input type="submit"  name="提交">
         </table>
     </form>

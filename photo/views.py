@@ -1,6 +1,6 @@
 from django.conf.global_settings import SECRET_KEY
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django_redis import get_redis_connection
 
 from .forms import *
@@ -24,6 +24,8 @@ def register(request):
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         phonecode = request.POST.get('phonecode')
+        conn = get_redis_connection('default')
+        cache.set(phone, phonecode, 60)
         p_c = cache.get(phone)
         if p_c == phonecode:
             UserInfo.objects.create(username=user,password=passhash,sex=sex,age=age,email=email,phone=phone,phonecode=p_c)
@@ -43,4 +45,19 @@ def register_code(request):
 
 def login(request):
     if request.method == 'GET':
-        return render(request,'login.html')
+        u = UserInfoForm()
+        return render(request,'login.html',locals())
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username.strip() and password:  # 确保用户名和密码都不为空
+            # 用户名字符合法性验证
+            # 密码长度验证
+            # 更多的其它验证.....
+            try:
+                user = UserInfo.objects.get(username=username)
+            except:
+                return redirect('/register/')
+            if user.password == hashlib.sha256(password.encode()).hexdigest():
+                return redirect('/index/')
+    return redirect('/register/')
