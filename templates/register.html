@@ -5,24 +5,6 @@
     <title>注册</title>
 </head>
 <body>
-<script type="text/javascript">
-    var countdown = 60
-    function settime(obj) {
-        if(countdown == 0 ){
-            obj.removeAttribute('disable');
-            obj.value = '免费获取验证码';
-            countdown = 60;
-            return;
-        }else{
-            obj.setAttribute('disable', true);
-            obj.value = '重新发送(' + countdown + ")";
-            countdown--;
-        }
-    setTimeout(function() {
-    settime(obj) }
-    ,1000)
-    }
-</script>
     <form action="" method="post">
         {% csrf_token %}
         <table>
@@ -32,5 +14,6 @@
         <input type="button"  id="code"  value="获取验证码">
         <input type="submit"  name="提交">
     </form>
+    <a href="/">直接登录</a>
 </body>
 </html>

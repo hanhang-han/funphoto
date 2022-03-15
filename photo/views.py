@@ -15,7 +15,6 @@ def register(request):
         u = UserInfoForm()
         return render(request,'register.html',locals())
     if request.method == 'POST':
-        u = UserInfoForm(request.POST)
         user = request.POST.get('username')
         password = request.POST.get('password')
         password += SECRET_KEY
@@ -39,5 +38,9 @@ def register_code(request):
             return JsonResponse({'data':'稍后重新发送'})
         phonecode = code()
         send_sms_task.add.apply_async(args=[phone,phonecode])
-        cache.set(phone,phonecode)
+        cache.set(phone,phonecode,60)
         return JsonResponse({'data': '验证码发送成功'})
+
+def login(request):
+    if request.method == 'GET':
+        return render(request,'login.html')
