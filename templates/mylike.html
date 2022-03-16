@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form>
+    {% for photo in photos %}
+    <img src={{ photo.image }}>
+    {% endfor %}
+</form>
+</body>
+</html>

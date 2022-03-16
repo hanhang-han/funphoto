@@ -29,6 +29,7 @@ class Photo(models.Model):
     uploadtime = models.DateTimeField(verbose_name='上传时间', auto_now=True)
     downloadtimes = models.IntegerField(verbose_name='下载次数')
     liker = models.ManyToManyField(UserInfo,related_name='liker')
+    likenum = models.IntegerField(verbose_name='赞',default=0)
 
     def __str__(self):
         return self.name

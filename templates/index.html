@@ -6,12 +6,11 @@
 </head>
 <body>
     <form>
-        <p>
-            <img src="/static/1.jpg" width="600" height="400">
-        </p>
-        <p>
-            <img src="/static/2.jpg" width="600" height="400">
-        </p>
+        {% for photo in photos %}
+    <a href="/like/{{ photo.id }}/"><img src="{{ photo.image }}"/></a>
+{% endfor %}
     </form>
+<a href="/ownspace/">个人空间</a>
+<a href="/logout">登出</a>
 </body>
 </html>
