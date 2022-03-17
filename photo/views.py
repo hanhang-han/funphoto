@@ -14,7 +14,7 @@ import hashlib
 from .models import *
 from django.core.cache import cache
 from .utils.celery_app.task import send_sms_task
-from .utils.utils import code
+from .utils.utils import code, get_redis
 
 
 def login_check(func):
@@ -85,7 +85,7 @@ def login(request):
                 request.session['username'] = user.username
                 request.session['id'] = user.id
                 request.session.set_expiry(60 * 60)
-                return redirect('/index/')
+                return redirect('/')
 
 
 @login_check
@@ -162,5 +162,22 @@ def dislike(request, photoid):
 def mylike(request):
     user_id = request.session.get('id')
     user = UserInfo.objects.get(id=user_id)
-    photos = user.photo_set.all()
-    return render(request,'mylike',locals())
+    photos = user.liker.all()
+    return render(request,'mylike.html',locals())
+
+def rankboard(request):
+    r = get_redis()
+    tops = r.zrevrange("rankboard", 0, 3, withscores=True)
+    r.expire('rankboard',20)
+    if tops:
+        photos = Photo.objects.filter(id__in=[int(item[0]) for item in tops]).all()
+        for photo in photos:
+            print(photo.name,photo.likenum)
+        print(1111)
+    else:
+        photos = Photo.objects.all().order_by('-likenum')[:3]
+        print(3333)
+        for photo in photos:
+            r.zadd('rankboard',photo.id,photo.likenum)
+        print(2222)
+    return render(request,'rankboard.html',locals())
