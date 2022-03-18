@@ -22,7 +22,6 @@ def login_check(func):
         if req.session.get('is_login'):
             return func(req)
         else:
-            path = req.path
             return redirect('/')  # 用于记录访问历史页面，便于登录后跳转
 
     return wrapper
@@ -50,7 +49,7 @@ def register(request):
                                     phonecode=p_c)
         else:
             return HttpResponse('验证码错误')
-        return render(request, 'register.html', locals())
+        return render(request, 'login.html', locals())
 
 
 def register_code(request):
@@ -101,6 +100,7 @@ def index(request):
     photo = Photo.objects.all().order_by('uploadtime')
     a, b = [random.randint(0, m - 1) for _ in range(2)]
     photos = [photo[a], photo[b]]
+    ranks = rankboard(request)
     return render(request, 'index.html', locals())
 
 
@@ -121,15 +121,15 @@ def uploadphoto(request):
         dir = "D:/Image/%s" % username
         if not os.path.exists(dir):
             os.makedirs(dir)
-        image_path = "D:/Image/%s/%s" % (username, photoname)
-        with open(image_path, 'wb') as f:
+        image_path = "%s/%s" % (username, photoname)
+        with open(dir+'/%s'%photoname, 'wb') as f:
             for content in photo.chunks():
                 f.write(content)
         new_img = Photo(
             image=image_path,  # 拿到图片
             name=photoname,  # 拿到图片的名字
             downloadtimes=0,
-            owner_id=1
+            owner_id=userid
         )
         new_img.save()  # 保存图片
         # 修改的是下面这句代码，重定向到展示记得URL
@@ -168,16 +168,14 @@ def mylike(request):
 def rankboard(request):
     r = get_redis()
     tops = r.zrevrange("rankboard", 0, 3, withscores=True)
-    r.expire('rankboard',20)
+
     if tops:
         photos = Photo.objects.filter(id__in=[int(item[0]) for item in tops]).all()
         for photo in photos:
             print(photo.name,photo.likenum)
-        print(1111)
     else:
         photos = Photo.objects.all().order_by('-likenum')[:3]
-        print(3333)
         for photo in photos:
             r.zadd('rankboard',photo.id,photo.likenum)
-        print(2222)
-    return render(request,'rankboard.html',locals())
+        r.expire('rankboard', 60*30)
+    return photos

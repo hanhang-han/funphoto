@@ -7,7 +7,7 @@
 <body>
 <form>
     {% for photo in photos %}
-    <img src={{ photo.image }}>
+    <img src="/{{ photo.image }}">
     {% endfor %}
 </form>
 </body>

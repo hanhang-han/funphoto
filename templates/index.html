@@ -7,11 +7,17 @@
 <body>
     <form>
         {% for photo in photos %}
-    <a href="/like/{{ photo.id }}/"><img src="{{ photo.image }}"/></a>
+    <a href="/like/{{ photo.id }}/"><img src="/{{ photo.image }}" width="600" height="400"/></a>
+    <br>
 {% endfor %}
     </form>
-<a href="/ownspace">个人空间</a>
-<a href="/rankboard">排行榜</a>
-<a href="/logout">登出</a>
+<a href="/ownspace/">个人空间</a>
+<a href="/logout/">登出</a>
+    <form>
+        {% for rank in ranks %}
+            <p>{{ rank.name }}</p>
+            <br>
+        {% endfor %}
+    </form>
 </body>
 </html>
