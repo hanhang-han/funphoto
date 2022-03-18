@@ -30,7 +30,7 @@ class Photo(models.Model):
     downloadtimes = models.IntegerField(verbose_name='下载次数')
     liker = models.ManyToManyField(UserInfo,related_name='liker')
     likenum = models.IntegerField(verbose_name='赞',default=0)
-
+    delete = models.BooleanField(verbose_name='是否删除',default=False)
     def __str__(self):
         return self.name
     class Meta:

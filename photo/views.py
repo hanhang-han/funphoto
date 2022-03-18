@@ -30,7 +30,7 @@ def login_check(func):
 def register(request):
     if request.method == 'GET':
         u = UserInfoForm()
-        return render(request, 'register.html', locals())
+        return render(request, 'register111.html', locals())
     if request.method == 'POST':
         user = request.POST.get('username')
         password = request.POST.get('password')
@@ -96,8 +96,15 @@ def logout(request):
 @login_check
 def index(request):
     username = request.session.get('username')
-    m = Photo.objects.all().count()
-    photo = Photo.objects.all().order_by('uploadtime')
+    r = get_redis()
+    r_id = '%s_like_times' % request.session.get('id')
+    times = r.get(r_id)
+    if not times:
+        times = r.set(r_id, 0)
+        r.expire(r_id, 60 * 2)
+    times = int(times)
+    m = Photo.objects.filter(delete=False).all().count()
+    photo = Photo.objects.filter(delete=False).all().order_by('uploadtime')
     a, b = [random.randint(0, m - 1) for _ in range(2)]
     photos = [photo[a], photo[b]]
     ranks = rankboard(request)
@@ -107,7 +114,7 @@ def index(request):
 @login_check
 def ownspace(request):
     username = request.session.get('username')
-    photos = Photo.objects.filter(owner__username=username)
+    photos = Photo.objects.filter(owner__username=username,delete=False)
     return render(request, 'ownspace.html', locals())
 
 
@@ -138,16 +145,28 @@ def uploadphoto(request):
         return render(request, 'upload.html')
 
 
+def delete(request,photoid):
+    Photo.objects.filter(id = photoid).update(delete = True)
+    return redirect('/ownspace/')
+
 # @login_check
 def like(request, photoid):
-    print(photoid)
-    Photo.objects.filter(id=photoid).all().update(likenum=F('likenum') + 1)
-    photo = Photo.objects.filter(id=photoid).first()
-    user_id = request.session.get('id')
-    print(user_id)
-    user = UserInfo.objects.get(id=user_id)
-    photo.liker.add(user)
-    return redirect('/index/')
+    if request.method == 'GET':
+        r = get_redis()
+        r_id = '%s_like_times'%request.session.get('id')
+        times = r.get(r_id)
+        print(times)
+        if int(times) > 10:
+            return HttpResponse('您今天点赞超过三十次，24小时后继续')
+        r.incr('%s_like_times'%request.session.get('id'),1)
+        print(photoid)
+        Photo.objects.filter(id=photoid).all().update(likenum=F('likenum') + 1)
+        photo = Photo.objects.filter(id=photoid).first()
+        user_id = request.session.get('id')
+        print(user_id)
+        user = UserInfo.objects.get(id=user_id)
+        photo.liker.add(user)
+        return redirect('/index/')
 
 
 # @login_check
@@ -162,13 +181,12 @@ def dislike(request, photoid):
 def mylike(request):
     user_id = request.session.get('id')
     user = UserInfo.objects.get(id=user_id)
-    photos = user.liker.all()
+    photos = user.liker.filter(delete=False).all()
     return render(request,'mylike.html',locals())
 
 def rankboard(request):
     r = get_redis()
     tops = r.zrevrange("rankboard", 0, 3, withscores=True)
-
     if tops:
         photos = Photo.objects.filter(id__in=[int(item[0]) for item in tops]).all()
         for photo in photos:

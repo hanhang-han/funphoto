@@ -11,6 +11,7 @@
 <a href="/logout/">登出</a>
 {% for photo in photos %}
     <img src="/{{ photo.image }}"/>
+    <a href="/delete/{{ photo.id }}/">删除</a>
 {% endfor %}
 
 </body>

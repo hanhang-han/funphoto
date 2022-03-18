@@ -11,4 +11,5 @@ urlpatterns = [
     path('uploadphoto/', uploadphoto, name='uploadphoto'),
     path('like/<photoid>/',like,name = 'like'),
     path('mylike/',mylike,name = 'mylike'),
+    path('delete/<photoid>/',delete,name = 'delete'),
 ]
