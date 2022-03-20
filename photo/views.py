@@ -1,21 +1,22 @@
-import datetime
+import json
 import os
 import random
-import time
+
 
 from django.conf.global_settings import SECRET_KEY
 from django.db.models import F
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django_redis import get_redis_connection
+
 
 from .forms import *
 import hashlib
 from .models import *
 from django.core.cache import cache
-from .utils.celery_app.task import send_sms_task
-from .utils.utils import code, get_redis
-
+from .utils import task
+from .utils.utils import code, get_redis, gencaptcha, val_captcha
+message = ''
 
 def login_check(func):
     def wrapper(req):
@@ -26,11 +27,17 @@ def login_check(func):
 
     return wrapper
 
-
 def register(request):
     if request.method == 'GET':
+        global message
         u = UserInfoForm()
-        return render(request, 'register111.html', locals())
+        captcha = gencaptcha()
+        dic = {
+            'u':u,
+            'message':message,
+            'captcha':captcha,
+        }
+        return render(request, 'register111.html',dic)
     if request.method == 'POST':
         user = request.POST.get('username')
         password = request.POST.get('password')
@@ -51,22 +58,34 @@ def register(request):
             return HttpResponse('验证码错误')
         return render(request, 'login.html', locals())
 
+def refresh_captcha(request):
+    return HttpResponse(json.dumps(gencaptcha()), content_type='application/json')
 
 def register_code(request):
     if request.method == 'POST':
+        global message
         phone = request.POST.get('phone')
+        if not val_captcha(request.POST.get('captcha'),request.POST.get('hashkey')):
+            message = '验证码错误'
+            return redirect('/register/')
         if cache.has_key(phone):
-            return JsonResponse({'data': '稍后重新发送'})
+            message = '请稍后重新发送'
+            return redirect('/register/')
         phonecode = code()
-        send_sms_task.add.apply_async(args=[phone, phonecode])
-        cache.set(phone, phonecode, 60)
-        return JsonResponse({'data': '验证码发送成功'})
+        print(phone,phonecode)
 
+        task.send_sms_task.apply_async(args=[phone, phonecode])
+        task.add.apply_async(args=[3,7])
+        cache.set(phone, phonecode, 60)
+        print(cache.get(phone))
+        message = '短信验证码已发送'
+        print(message)
+        return redirect('/register/')
 
 def login(request):
     if request.method == 'GET':
         u = UserInfoForm()
-        if request.session.get('is_login') == True:
+        if request.session.get('is_login'):
             return redirect('/index/')
         else:
             return render(request, 'login.html', locals())
@@ -86,12 +105,10 @@ def login(request):
                 request.session.set_expiry(60 * 60)
                 return redirect('/')
 
-
 @login_check
 def logout(request):
     request.session.flush()
     return redirect('/')
-
 
 @login_check
 def index(request):
@@ -110,13 +127,11 @@ def index(request):
     ranks = rankboard(request)
     return render(request, 'index.html', locals())
 
-
 @login_check
 def ownspace(request):
     username = request.session.get('username')
-    photos = Photo.objects.filter(owner__username=username,delete=False)
+    photos = Photo.objects.filter(owner__username=username, delete=False)
     return render(request, 'ownspace.html', locals())
-
 
 @login_check
 def uploadphoto(request):
@@ -129,7 +144,7 @@ def uploadphoto(request):
         if not os.path.exists(dir):
             os.makedirs(dir)
         image_path = "%s/%s" % (username, photoname)
-        with open(dir+'/%s'%photoname, 'wb') as f:
+        with open(dir + '/%s' % photoname, 'wb') as f:
             for content in photo.chunks():
                 f.write(content)
         new_img = Photo(
@@ -144,21 +159,20 @@ def uploadphoto(request):
     else:
         return render(request, 'upload.html')
 
-
-def delete(request,photoid):
-    Photo.objects.filter(id = photoid).update(delete = True)
+def delete(request, photoid):
+    Photo.objects.filter(id=photoid).update(delete=True)
     return redirect('/ownspace/')
 
 # @login_check
 def like(request, photoid):
     if request.method == 'GET':
         r = get_redis()
-        r_id = '%s_like_times'%request.session.get('id')
+        r_id = '%s_like_times' % request.session.get('id')
         times = r.get(r_id)
         print(times)
         if int(times) > 10:
             return HttpResponse('您今天点赞超过三十次，24小时后继续')
-        r.incr('%s_like_times'%request.session.get('id'),1)
+        r.incr('%s_like_times' % request.session.get('id'), 1)
         print(photoid)
         Photo.objects.filter(id=photoid).all().update(likenum=F('likenum') + 1)
         photo = Photo.objects.filter(id=photoid).first()
@@ -182,7 +196,7 @@ def mylike(request):
     user_id = request.session.get('id')
     user = UserInfo.objects.get(id=user_id)
     photos = user.liker.filter(delete=False).all()
-    return render(request,'mylike.html',locals())
+    return render(request, 'mylike.html', locals())
 
 def rankboard(request):
     r = get_redis()
@@ -190,10 +204,10 @@ def rankboard(request):
     if tops:
         photos = Photo.objects.filter(id__in=[int(item[0]) for item in tops]).all()
         for photo in photos:
-            print(photo.name,photo.likenum)
+            print(photo.name, photo.likenum)
     else:
         photos = Photo.objects.all().order_by('-likenum')[:3]
         for photo in photos:
-            r.zadd('rankboard',photo.id,photo.likenum)
-        r.expire('rankboard', 60*30)
+            r.zadd('rankboard', photo.id, photo.likenum)
+        r.expire('rankboard', 60 * 30)
     return photos

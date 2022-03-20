@@ -9,6 +9,8 @@
         {% csrf_token %}
         <table>
             {{ u.as_table }}
+            <img  src="{{ cap.image_url }}" alt="点击切换" id="id_captcha" >
+            <input type="text" name="captcha" placeholder="验证码"> <br>
         </table>
         <input type="text" name="phone_code" id="check_code" >
 {#        <input type="button"  id="code"  value="获取验证码">#}

@@ -1,6 +1,8 @@
 from django.urls import path
 
 from .views import *
+
+app_name = 'photo'
 urlpatterns = [
     path('register/',register,name='register'),
     path('register_code/',register_code,name='register_code'),
@@ -12,4 +14,5 @@ urlpatterns = [
     path('like/<photoid>/',like,name = 'like'),
     path('mylike/',mylike,name = 'mylike'),
     path('delete/<photoid>/',delete,name = 'delete'),
+    path('refresh_captcha/', refresh_captcha),
 ]

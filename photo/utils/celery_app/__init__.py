@@ -1,6 +1,7 @@
 from celery import Celery
 
-from photo.utils.celery_app import celeryconfig
 
 app = Celery('demo')
-app.config_from_object(celeryconfig)
+app.config_from_object('celery_app.celeryconfig')
+
+app.autodiscover_tasks(['celery_app'])
