@@ -16,6 +16,7 @@ class UserInfo(models.Model):
     lastlogintime = models.DateTimeField(verbose_name='上次登录时间',blank=True,null=True)
     registertime = models.DateTimeField(verbose_name='注册时间',auto_now=True)
     phonecode = models.IntegerField(verbose_name='短信验证码',null=True)
+    weight = models.IntegerField(verbose_name='权重',default=60)
     def __str__(self):
         return self.username
     class Meta:
@@ -30,6 +31,8 @@ class Photo(models.Model):
     downloadtimes = models.IntegerField(verbose_name='下载次数')
     liker = models.ManyToManyField(UserInfo,related_name='liker')
     likenum = models.IntegerField(verbose_name='赞',default=0)
+    showtimes = models.IntegerField(verbose_name='下载次数',default=0)
+    hot = models.FloatField(verbose_name='热度',default=0,)
     delete = models.BooleanField(verbose_name='是否删除',default=False)
     def __str__(self):
         return self.name

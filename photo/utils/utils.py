@@ -2,7 +2,10 @@ import random
 
 from captcha.helpers import captcha_image_url
 from captcha.models import CaptchaStore
+from django.db.models import F
 from django_redis import get_redis_connection
+
+from photo.models import Photo, UserInfo
 
 
 def code():
@@ -31,3 +34,14 @@ def val_captcha(captchastr,captchakey):
     if captchastr.lower() == CaptchaStore.objects.get(hashkey=captchakey).response:
         return True
     else:return False
+
+def hot_add(request,userid,photoid):
+    user_weight = request.session.get('weight')
+    if not user_weight:
+        user_weight_f = UserInfo.objects.filter(id=userid).values('weight')
+        print(user_weight_f)
+        print(user_weight_f[0]['weight'])
+        user_weight = user_weight_f[0]['weight']/100
+        request.session['weight'] = user_weight
+    Photo.objects.filter(id=photoid).update(hot = F('hot') + user_weight)
+    return 'done'
