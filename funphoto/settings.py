@@ -76,17 +76,17 @@ WSGI_APPLICATION = 'funphoto.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'USER': 'root',
         'NAME': 'photo_db',
+        'USER': 'root',
         'PASSWORD': 'Nuctech_50',
-        'HOST': 'loaclhost',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
-    ,
-    'default1': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # ,
+    # 'default1': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 CACHES = {

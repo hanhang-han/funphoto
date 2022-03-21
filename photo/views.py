@@ -56,7 +56,7 @@ def register(request):
                                     phonecode=p_c)
         else:
             return HttpResponse('验证码错误')
-        return render(request, 'login.html', locals())
+        return redirect('/')
 
 def refresh_captcha(request):
     return HttpResponse(json.dumps(gencaptcha()), content_type='application/json')
