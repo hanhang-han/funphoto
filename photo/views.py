@@ -4,6 +4,7 @@ import random
 
 
 from django.conf.global_settings import SECRET_KEY
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -131,6 +132,15 @@ def index(request):
 def ownspace(request):
     username = request.session.get('username')
     photos = Photo.objects.filter(owner__username=username, delete=False)
+    paginator = Paginator(photos,10)
+    page = request.GET.get('page')
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)  # 如果传入page参数不是整数，默认第一页
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    is_paginated = True if paginator.num_pages > 1 else False  # 如果页数小于1不使用分页
     return render(request, 'ownspace.html', locals())
 
 @login_check
