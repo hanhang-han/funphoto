@@ -20,7 +20,7 @@ class IPCheckMiddleware(MiddlewareMixin):
             time_check_p="{:.2f}".format(time_check)
             r.set(ip,time_now,ex=60)
             # print(time_check_p)
-            if time_check < 1:
+            if time_check < 0.1:
                 return HttpResponse('访问过于频繁')
     # def process_view(self,request,view_func,view_args,view_kwargs):
     #     print('开始处理函数')
