@@ -6,7 +6,7 @@ class UserInfoForm(forms.Form):
         ('1', '男'),
         ('2', '女')
     )
-    username = forms.CharField(max_length=50, label='用户名',
+    username = forms.CharField(max_length=50, label='用户名',required=True,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(max_length=200, label='密码',
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
