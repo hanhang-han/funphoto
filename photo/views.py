@@ -198,12 +198,12 @@ def like(request, photoid):
         user_id = request.session.get('id')
         hot_add(request,user_id,photoid)
         user = UserInfo.objects.get(id=user_id)
-        reciver = UserInfo.objects.get(liker__id=photoid)
+        reciver = UserInfo.objects.get(owner__id=photoid)
         print(type(reciver))
         notify.send(
             user,
             recipient=reciver,
-            verb='点了赞',
+            verb='点赞了',
             target=photo,
         )
         photo.liker.add(user)
@@ -211,8 +211,8 @@ def like(request, photoid):
 
 def mynotifications(request):
     user = UserInfo.objects.get(id = request.session['id'])
-    note_num = user.notifications.unread()
-    note_list = user.notifications.unread()
+    note_read = user.notifications.all()
+    note_unread = user.notifications.unread()
     return render(request,'mynotifitions.html',locals())
 
 def change_unread(request):

@@ -5,10 +5,20 @@
     <title>Title</title>
 </head>
 <body>
-{% block content %}
-    {% for note in note_list %}
+{% block content1 %}
+    {% for note in note_unread %}
+        <li>{{ note.actor }}{{ note.verb }}{{ note.target }}</li>
         <a href="{% url 'photo:change_unread'%}?notice_id={{ note.id }}">
-        <li>{{ note.actor }}{{ note.verb }}</li>
+        <li>已读</li>
+        </a>
+    {% endfor %}
+{% endblock %}
+<HR>
+{% block content2 %}
+    {% for note in note_read %}
+        <li>{{ note.actor }}{{ note.verb }}{{ note.target }}</li>
+        <a href="{% url 'photo:change_unread'%}?notice_id={{ note.id }}">
+        <li>删除</li>
         </a>
     {% endfor %}
 

@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'photo.UserInfo'
 # Application definition
 
+
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
+
 INSTALLED_APPS = [
     'simpleui',
     'django.contrib.admin',
