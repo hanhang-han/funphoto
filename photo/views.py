@@ -4,12 +4,13 @@ import random
 
 
 from django.conf.global_settings import SECRET_KEY
+from django.contrib.auth import authenticate
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django_redis import get_redis_connection
-
+from notifications.signals import notify
 
 from .forms import *
 import hashlib
@@ -197,8 +198,33 @@ def like(request, photoid):
         user_id = request.session.get('id')
         hot_add(request,user_id,photoid)
         user = UserInfo.objects.get(id=user_id)
+        reciver = UserInfo.objects.get(liker__id=photoid)
+        print(type(reciver))
+        notify.send(
+            user,
+            recipient=reciver,
+            verb='点了赞',
+            target=photo,
+        )
         photo.liker.add(user)
         return redirect('/index/')
+
+def mynotifications(request):
+    user = UserInfo.objects.get(id = request.session['id'])
+    note_num = user.notifications.unread()
+    note_list = user.notifications.unread()
+    return render(request,'mynotifitions.html',locals())
+
+def change_unread(request):
+    notice_id = request.GET.get('notice_id')
+    if notice_id:
+        user = UserInfo.objects.get(id=request.session['id'])
+        user.notifications.get(id=notice_id).mark_as_read()
+        return redirect("photo:ownspace")
+    else:
+        user = UserInfo.objects.get(id=request.session['id'])
+        user.notifications.mark_all_as_read()
+        return redirect("photo:ownspace")
 
 
 # @login_check

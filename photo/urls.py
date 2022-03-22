@@ -15,4 +15,6 @@ urlpatterns = [
     path('mylike/',mylike,name = 'mylike'),
     path('delete/<photoid>/',delete,name = 'delete'),
     path('refresh_captcha/', refresh_captcha),
+    path('mynotifications/',mynotifications,name = 'mynotifications'),
+    path('change_unread/',change_unread,name = 'change_unread'),
 ]

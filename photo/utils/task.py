@@ -18,7 +18,6 @@ def add(x, y):
     return x + y
 
 
-
 @app.task(name='send_sms_task')
 def send_sms_task(phone_code,mobile):
     a = YunPian(API_KEY)

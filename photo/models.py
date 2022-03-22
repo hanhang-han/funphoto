@@ -1,16 +1,17 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
-class UserInfo(models.Model):
+class UserInfo(AbstractUser):
     sex_choice = (
         ('1','男'),
         ('2','女')
     )
-    id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=50,verbose_name='用户名')
+    # id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=50,verbose_name='用户名',unique=True)
     password = models.CharField(max_length=200,verbose_name='密码')
     sex = models.CharField(choices=sex_choice,default='男',max_length=20)
-    age = models.IntegerField(verbose_name='年龄')
+    # age = models.IntegerField(verbose_name='年龄',default=18)
     email = models.EmailField(verbose_name='电子邮箱',max_length=50)
     phone = models.IntegerField(verbose_name='电话',unique=True)
     lastlogintime = models.DateTimeField(verbose_name='上次登录时间',blank=True,null=True)

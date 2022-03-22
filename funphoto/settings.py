@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-x%ikdf6gj6e(@fxmi*$b$@o4(4d5$@xpy-cwue&0n-ujat&obg
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'photo.UserInfo'
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'photo',
-    'captcha'
+    'captcha',
+    'notifications',
 ]
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False

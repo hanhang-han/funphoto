@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+    {% for note in note_list %}
+        <a href="{% url 'photo:change_unread'%}?notice_id={{ note.id }}">
+        <li>{{ note.actor }}{{ note.verb }}</li>
+        </a>
+    {% endfor %}
+
+{% endblock %}
+</body>
+</html>
