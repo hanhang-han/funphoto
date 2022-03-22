@@ -31,7 +31,8 @@ AUTH_USER_MODEL = 'photo.UserInfo'
 # Application definition
 
 
-DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True,
+                                'SOFT_DELETE': True}
 
 INSTALLED_APPS = [
     'simpleui',

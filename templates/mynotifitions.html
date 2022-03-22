@@ -17,7 +17,7 @@
 {% block content2 %}
     {% for note in note_read %}
         <li>{{ note.actor }}{{ note.verb }}{{ note.target }}</li>
-        <a href="{% url 'photo:change_unread'%}?notice_id={{ note.id }}">
+        <a href="{% url 'photo:change_read'%}?notice_id={{ note.id }}">
         <li>删除</li>
         </a>
     {% endfor %}

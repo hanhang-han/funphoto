@@ -211,7 +211,7 @@ def like(request, photoid):
 
 def mynotifications(request):
     user = UserInfo.objects.get(id = request.session['id'])
-    note_read = user.notifications.all()
+    note_read = user.notifications.read()
     note_unread = user.notifications.unread()
     return render(request,'mynotifitions.html',locals())
 
@@ -220,12 +220,21 @@ def change_unread(request):
     if notice_id:
         user = UserInfo.objects.get(id=request.session['id'])
         user.notifications.get(id=notice_id).mark_as_read()
-        return redirect("photo:ownspace")
+        return redirect("photo:mynotifications")
     else:
         user = UserInfo.objects.get(id=request.session['id'])
         user.notifications.mark_all_as_read()
-        return redirect("photo:ownspace")
-
+        return redirect("photo:mynotifications")
+def change_read(request):
+    notice_id = request.GET.get('notice_id')
+    if notice_id:
+        user = UserInfo.objects.get(id=request.session['id'])
+        user.notifications.filter(id=notice_id).mark_all_as_deleted()
+        return redirect("photo:mynotifications")
+    else:
+        user = UserInfo.objects.get(id=request.session['id'])
+        user.notifications.mark_all_as_deleted()
+        return redirect("photo:mynotifications")
 
 # @login_check
 def dislike(request, photoid):
