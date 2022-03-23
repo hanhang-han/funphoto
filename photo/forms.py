@@ -12,8 +12,6 @@ class UserInfoForm(forms.Form):
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     sex = forms.ChoiceField(choices=sex_choice,label='性别',
                             )
-    age = forms.IntegerField(label='年龄',
-                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label='电子邮箱', max_length=50,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
     phone = forms.IntegerField(label='电话',

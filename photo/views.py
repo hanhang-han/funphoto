@@ -47,16 +47,16 @@ def register(request):
         password += SECRET_KEY
         passhash = hashlib.sha256(password.encode()).hexdigest()
         sex = request.POST.get('sex')
-        age = request.POST.get('age')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         phonecode = request.POST.get('phonecode')
-        conn = get_redis_connection('default')
         cache.set(phone, phonecode, 60)
         p_c = cache.get(phone)
         if p_c == phonecode:
-            UserInfo.objects.create(username=user, password=passhash, sex=sex, age=age, email=email, phone=phone,
+            UserInfo.objects.create(username=user, password=passhash, sex=sex, email=email, phone=phone,
                                     phonecode=p_c)
+            r = get_redis()
+            r.rpush('register_list',user)
         else:
             return HttpResponse('验证码错误')
         return redirect('/')
@@ -138,9 +138,13 @@ def index(request):
     Photo.objects.filter(id__in=id_list).update(showtimes=F('showtimes')+1)
     ranks = rankboard(request)
     return render(request, 'index.html', locals())
+result = None
 
 @login_check
 def ownspace(request):
+    if result:
+        # print(result)
+        result.forget()
     username = request.session.get('username')
     photos = Photo.objects.filter(owner__username=username, delete=False)
     for photo in photos:
@@ -153,6 +157,7 @@ def ownspace(request):
 
 @login_check
 def uploadphoto(request):
+    global result
     if request.method == 'POST':
         userid = request.session.get('id')
         username = request.session.get('username')
@@ -163,7 +168,7 @@ def uploadphoto(request):
             os.makedirs(dir)
         image_path = "%s/%s" % (username, photoname)
         thumb_path = '_thumb.'.join(image_path.rsplit('.'))
-        task.thumb_made.apply_async(args=[dir + '/%s' % photoname,])
+        result = task.thumb_made.apply_async(args=[dir + '/%s' % photoname,])
         with open(dir + '/%s' % photoname, 'wb') as f:
             for content in photo.chunks():
                 f.write(content)
