@@ -1,10 +1,9 @@
 import json
 import os
-import random
+import pika
 
 
 from django.conf.global_settings import SECRET_KEY
-from django.contrib.auth import authenticate
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +19,10 @@ from .utils import task
 from .utils.utils import code, get_redis, gencaptcha, val_captcha, hot_add
 
 message = ''
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+channel.queue_declare(queue='register_list')
+
 
 def login_check(func):
     def wrapper(req):
@@ -33,6 +36,7 @@ def login_check(func):
 def register(request):
     if request.method == 'GET':
         global message
+        global channel
         u = UserInfoForm()
         captcha = gencaptcha()
         dic = {
@@ -55,8 +59,8 @@ def register(request):
         if p_c == phonecode:
             UserInfo.objects.create(username=user, password=passhash, sex=sex, email=email, phone=phone,
                                     phonecode=p_c)
-            r = get_redis()
-            r.rpush('register_list',user)
+            channel.basic_publish(exchange='',routing_key='register_list',body=user)
+            connection.close()
         else:
             return HttpResponse('验证码错误')
         return redirect('/')
