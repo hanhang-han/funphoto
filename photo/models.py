@@ -29,7 +29,7 @@ class Photo(models.Model):
     thumbimage = models.ImageField(verbose_name='缩略图路径',default=None)
     name = models.CharField(max_length=50,verbose_name='图片名')
     owner = models.ForeignKey(UserInfo,on_delete=models.CASCADE,verbose_name='所属用户',related_name='owner')
-    uploadtime = models.DateTimeField(verbose_name='上传时间', auto_now=True)
+    uploadtime = models.DateTimeField(verbose_name='上传时间', auto_now_add=True,)
     downloadtimes = models.IntegerField(verbose_name='下载次数')
     liker = models.ManyToManyField(UserInfo,related_name='liker')
     likenum = models.IntegerField(verbose_name='赞',default=0)

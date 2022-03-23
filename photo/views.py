@@ -149,15 +149,6 @@ def ownspace(request):
             task.thumb_made.apply_async(args=['D:/Image/'+str(photo.image),])
             photo.thumbimage='_thumb.'.join(str(photo.image).rsplit('.'))
             photo.save()
-    paginator = Paginator(photos,10)
-    page = request.GET.get('page')
-    try:
-        page_obj = paginator.page(page)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)  # 如果传入page参数不是整数，默认第一页
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)
-    is_paginated = True if paginator.num_pages > 1 else False  # 如果页数小于1不使用分页
     return render(request, 'ownspace.html', locals())
 
 @login_check
