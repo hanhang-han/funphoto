@@ -1,7 +1,11 @@
-image_path = 'D:/Image/%s/%s' % ('xiaohan', '11.txt')
-content = "edqweqwe"
-with open(image_path, 'w') as f:
-    # photo.chunks()为图片的一系列数据，它是一一段段的，所以要用for逐个读取
-        f.write(content)
+from PIL import Image
 
-# D:\Image\xioahan
+
+def thumb_made(image_url):
+    im = Image.open(image_url)
+    im.thumbnail((200,100))
+    thumb_url ='_thumb.'.join(image_url.rsplit('.'))
+    im.save(thumb_url)
+    return 'finsihed'
+image_url = 'D:/Image/hh/亚马逊.png'
+thumb_made(image_url)

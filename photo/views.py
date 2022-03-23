@@ -143,6 +143,12 @@ def index(request):
 def ownspace(request):
     username = request.session.get('username')
     photos = Photo.objects.filter(owner__username=username, delete=False)
+    for photo in photos:
+        if not photo.thumbimage:
+            print('D:/Image/'+str(photo.image))
+            task.thumb_made.apply_async(args=['D:/Image/'+str(photo.image),])
+            photo.thumbimage='_thumb.'.join(str(photo.image).rsplit('.'))
+            photo.save()
     paginator = Paginator(photos,10)
     page = request.GET.get('page')
     try:
@@ -165,6 +171,8 @@ def uploadphoto(request):
         if not os.path.exists(dir):
             os.makedirs(dir)
         image_path = "%s/%s" % (username, photoname)
+        thumb_path = '_thumb.'.join(image_path.rsplit('.'))
+        task.thumb_made.apply_async(args=[dir + '/%s' % photoname,])
         with open(dir + '/%s' % photoname, 'wb') as f:
             for content in photo.chunks():
                 f.write(content)
@@ -172,10 +180,10 @@ def uploadphoto(request):
             image=image_path,  # 拿到图片
             name=photoname,  # 拿到图片的名字
             downloadtimes=0,
-            owner_id=userid
+            owner_id=userid,
+            thumbimage=thumb_path
         )
         new_img.save()  # 保存图片
-        # 修改的是下面这句代码，重定向到展示记得URL
         return redirect('/ownspace/')
     else:
         return render(request, 'upload.html')

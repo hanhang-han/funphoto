@@ -1,6 +1,6 @@
 # from photo.utils.celery_app import app
 from .yunpian import YunPian
-
+from PIL import Image
 
 API_KEY='srdwqewqe'
 
@@ -23,3 +23,10 @@ def send_sms_task(phone_code,mobile):
     a = YunPian(API_KEY)
     a.send_sms(phone_code, mobile)
     return 'finished'
+@app.task(name='thumb_made')
+def thumb_made(image_url):
+    im = Image.open(image_url)
+    im.thumbnail((200,100))
+    thumb_url ='_thumb.'.join(image_url.rsplit('.'))
+    im.save(thumb_url)
+    return 'finsihed'

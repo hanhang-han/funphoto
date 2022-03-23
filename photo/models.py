@@ -26,6 +26,7 @@ class UserInfo(AbstractUser):
 class Photo(models.Model):
     id = models.AutoField(primary_key=True)
     image = models.ImageField(verbose_name='图片路径')
+    thumbimage = models.ImageField(verbose_name='缩略图路径',default=None)
     name = models.CharField(max_length=50,verbose_name='图片名')
     owner = models.ForeignKey(UserInfo,on_delete=models.CASCADE,verbose_name='所属用户',related_name='owner')
     uploadtime = models.DateTimeField(verbose_name='上传时间', auto_now=True)

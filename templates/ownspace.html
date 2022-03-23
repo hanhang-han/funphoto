@@ -11,7 +11,7 @@
 <a href="{% url 'photo:mynotifications' %}">我的消息</a>
 <a href="/logout/">登出</a>
 {% for photo in page_obj %}
-    <img src="/{{ photo.image }}"/>
+    <img src="/{{ photo.thumbimage }}"/>
     <a href="/delete/{{ photo.id }}/">删除</a>
 {% endfor %}
 {% if is_paginated %}
