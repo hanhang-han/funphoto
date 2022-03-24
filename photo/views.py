@@ -4,11 +4,9 @@ import pika
 
 
 from django.conf.global_settings import SECRET_KEY
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import F
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django_redis import get_redis_connection
 from notifications.signals import notify
 
 from .forms import *
