@@ -10,12 +10,8 @@
         <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.js"></script>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sign-in/">
-
-    
-
     <!-- Bootstrap core CSS -->
 <link href="../static/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -32,7 +28,6 @@
       }
     </style>
 
-    
     <!-- Custom styles for this template -->
     <link href="../static/css/login.css" rel="stylesheet">
   </head>
@@ -43,43 +38,14 @@
       {% csrf_token %}
     <img class="mb-4" src="../static/brand/bootstrap-logo.svg" alt="" width="72" height="57">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
       <table>
     <div class="form-floating">
         {{ u.as_table }}
-        <button class="w-100 btn btn-lg btn-primary"  type="submit">注册</button>
   </div>
     </table>
+      <button class="w-100 btn btn-lg btn-primary"  type="submit">注册</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
   </form>
-    <form method="post">
-        {% csrf_token %}
-        {% if message != ''%}
-            <p>{{ message }}</p>
-        {% endif %}
-         <a href="#" class="captcha">
-            <img  src="{{ captcha.image_url }}" alt="点击切换" id="id_captcha" >
-        </a>
-        <input value="{{ captcha.hashkey }}" name="hashkey" type="hidden" id="id_captcha_0">
-            <input type="text" name="captcha" placeholder="验证码"> <br>
-        <input type="number" name="phone" placeholder="手机号码">
-        <input type="submit"  id="code"  value="获取验证码" class="form-control" formaction="/register_code/">
-    </form>
-<script>
-        // <!-- 动态刷新验证码js -->
-        $(document).ready(function(){
-            $('.captcha').click(function () {
-                $.getJSON("/refresh_captcha/", function (result) {
-                    $('#id_captcha').attr('src', result['image_url']);
-                    $('#id_captcha_0').val(result['hashkey'])
-                });
-            });
-        });
-
-            function func(){
-                alert('112')
-            }
-</script>
 </main>
   </body>
 </html>

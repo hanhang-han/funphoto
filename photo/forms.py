@@ -10,13 +10,13 @@ class UserInfoForm(forms.Form):
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(max_length=200, label='密码',
                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    sex = forms.ChoiceField(choices=sex_choice,label='性别',
-                            )
-    email = forms.EmailField(label='电子邮箱', max_length=50,
+    # sex = forms.ChoiceField(choices=sex_choice,label='性别',
+    #                         )
+    email = forms.EmailField(label='邮箱', max_length=50,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
     phone = forms.IntegerField(label='电话',
                                widget=forms.NumberInput(attrs={'class': 'form-control'}))
     # captcha = CaptchaField(label='验证码',)
     #                        # widget=forms.TextInput(attrs={'class': 'form-control'}))
-    phonecode = forms.IntegerField(label='短信验证码',
+    phonecode = forms.IntegerField(label='邀请码',
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
