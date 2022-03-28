@@ -1,14 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="../static/css/index.css">
+	<style>
+		div {
+			width: 100%;
+			overflow: hidden;
+		}
+
+		div>form {
+			width: 70%;
+			height: 600px;
+			margin: 65px auto 0;
+		}
+		#submit{
+			display: block;
+			width: 100px;
+			height: 40px;
+			border: none;
+			border-radius: 5px;
+			background-color: rgb(49, 108, 244);
+			color: #fff;
+			transition: all 0.2s;
+		}
+		#submit:hover{
+			transform: translateY(-1px);
+			box-shadow:1px 2px 6px 0px rgb(49 108 244);
+		}
+	</style>
 </head>
+
 <body>
-	<form method='post' enctype="multipart/form-data" action="/uploadphoto/">
-		{% csrf_token %} {# 【2】post上传别忘记带上验证标识 #}
-		<input type="file" name="photo"><br/>
-		<input type="submit" value="上传">
-	</form>
+	<div>
+		<form method='post' enctype="multipart/form-data" action="/uploadphoto/">
+			{% csrf_token %} {# 【2】post上传别忘记带上验证标识 #}
+			<input type="file" name="photo"><br />
+			<input type="submit" value="上传" id="submit">
+		</form>
+	</div>
 </body>
+
 </html>

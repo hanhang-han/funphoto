@@ -42,7 +42,7 @@ def register(request):
             'message':message,
             'captcha':captcha,
         }
-        return render(request, 'register111.html',dic)
+        return render(request, 'register.html',dic)
     if request.method == 'POST':
         user = request.POST.get('username')
         password = request.POST.get('password')

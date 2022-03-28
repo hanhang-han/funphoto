@@ -1,26 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <style>
+        body{
+            background-color: #77787b;
+        }
+        .header {
+            width: 100%;
+            height: 65px;
+            background-image: url("../static/The-USA-in-10-Iconic-Images-back.jpg");
+            background-color: rgb(39, 135, 170, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .header>span {
+            border: none;
+            color: rgb(0,0,0);
+            display: block;
+            height: 100%;
+            width: 30%;
+            text-align: center;
+            line-height: 65px;
+            float: left;
+            font-size: 15px;
+            font-weight: 400;
+            font-family: "微软雅黑", serif;
+        }
+
+        .header>div {
+            border: none;
+            width: 20%;
+            height: 70%;
+            float: right;
+            display: flex;
+            justify-content: space-evenly;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .header>div>a {
+            text-decoration: none;
+            color: rgb(0,0,0);
+            text-align: center;
+            line-height: 65px;
+            font-family: "微软雅黑", serif;
+        }
+
+        .header>div>a:hover {
+            border-bottom: 1px solid #fff;
+        }
+
+        .header-img {
+            width: 100%;
+            height: 500px;
+            margin-top: 65px;
+            position: relative;
+        }
+
+        .header-img>p {
+            float: left;
+            width: 50%;
+        }
+
+        .header-img>p>a {
+            display: block;
+            width: 100%;
+        }
+        .header-img>div {
+            position: absolute;
+            width: 100%;
+            color: cadetblue;
+            width: 25px;
+            height: 180px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 18px;
+            top: 100px;
+            left: 50%;
+            margin-left: -12px;
+        }
+        .header-img>p>a>img {
+            display: block;
+            max-width: 100%;
+            max-height: 80%;
+            margin: auto;
+            background-size: cover;
+        }
+
+        .content {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content>div {
+            width: 20%;
+            height: 200px;
+            float: left;
+            margin: auto;
+            position: relative;
+        }
+        .content>div:before{
+            content: "top3";/*这里可以动态数据 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0, 0, 0, 0.3);
+            float: left;
+            color: #fff;
+            text-align: center;
+            font-family: 等线, serif;
+            font-size: 20px;
+            line-height: 200px;
+        }
+        .content>div>img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            background-size: cover;
+        }
+        .content>p {
+            width: 10%;
+            height: 100%;
+            text-align: center;
+            line-height: 100px;
+            font-size:18px;
+        }
+    </style>
 </head>
-<body>
-    <textarea>{{ username }}您好，您已点赞{{ times }}张图</textarea>
-    <form>
+
+<body >
+
+    <div class="header">
+        <span>{{ username }}您好，您已点赞{{ times }}张图</span>
+        <div>
+            <a href="/ownspace/">个人空间</a>
+            <a href="/logout/">登出</a>
+        </div>
+    </div>
+    <form class="header-img">
         {% for photo in photos %}
-     <p style="width: auto;height: 400px;text-align: center">
-    <a href="/like/{{ photo.id }}/" ><img src="/{{ photo.image }}" width="600" height="400"/></a>
-     </p>
-{% endfor %}
+        <p>
+            <a href="/like/{{ photo.id }}/"><img src="/{{ photo.image }}/" width="600" height="400" /></a>
+        </p>
+        {% endfor %}
+        <div>
+            请选择你喜欢的图片
+        </div>
     </form>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<a href="/ownspace/">个人空间</a>
-<a href="/logout/">登出</a>
-    <form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <form class="content">
         {% for rank in ranks %}
-            <p>{{ rank.name }}</p>
-            <br>
+        <div>
+             <img src="/{{ rank.image }}" />
+        </div>
+        <p>{{ rank.image }}</p>
+        <br>
         {% endfor %}
     </form>
 </body>
+
 </html>
