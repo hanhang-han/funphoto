@@ -9,29 +9,37 @@
         .header {
             width: 100%;
             height: 65px;
-            background-color: rgb(0, 0, 0,0.8);
+            background-color: rgb(0, 0, 0, 0.8);
         }
+
         .header>div {
             width: 20%;
             height: 70%;
-            float: right;
+            float: left;
             display: flex;
             justify-content: space-evenly;
             font-size: 15px;
             font-weight: 400;
         }
-        .header>div>a {
+
+        .header>div:nth-child(2) {
+            width: 30%;
+            float: right;
+        }
+
+        .header div a {
             text-decoration: none;
             color: #fff;
             text-align: center;
             line-height: 65px;
         }
+
         .header>div>a:hover {
             border-bottom: 1px solid #fff;
         }
-
         .content {
             width: 100%;
+            margin-top: 10px;
         }
 
         .content>div {
@@ -45,13 +53,21 @@
             margin: auto;
             background-size: cover;
         }
-        .content>p {
-            height: 100px;
-            text-align: center;
-            line-height: 100px;
+        .content>div>p>span{
+            text-decoration: none;
+            color: rgb(0,0,0);
+            text-align: left;
+            line-height: 20px;
+            font-size: 18px;
+            font-weight: 400;
+        }
+        .content>div>p {
+            height: 40px;
+            text-align: right;
+            line-height:20px;
             font-size:18px;
         }
-        .content>p>a {
+        .content>div>p>a {
             color: rgb(145, 144, 144);
         }
     </style>
@@ -60,17 +76,22 @@
 <body>
     <div class="header">
         <div>
-            <a href="{% url 'photo:index' %}">返回首页</a>
+            <a href="{% url 'photo:index' %}">首页</a>
+            <a href="{% url 'photo:uploadphoto' %}">上传图片</a>
+        </div>
+        <div>
             <a href="{% url 'photo:ownspace' %}">个人空间</a>
+            <a href="{% url 'photo:mynotifications' %}">我的消息</a>
+            <a href="{% url 'photo:logout' %}">登出</a>
         </div>
     </div>
     <form class="content">
         {% for photo in photos %}
         <div>
-        <!-- <img src="/{{ photo.image }}"> -->
-        <img src="../static/Image/hh/微信图片_20211018102245.jpg" />
+        <img src="/{{ photo.image }}">
+                    <p><span>{{ photo.likenum }}人喜欢</span>
+                <a href="/dislike/{{ photo.id }}/">取消喜欢</a>
         </div>
-        <p><a href="{% url " photo:mylike" %}">不喜欢</a></p>
         {% endfor %}
     </form>
 </body>

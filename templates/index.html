@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../static/css/index.css">
     <style>
         body{
-            background-color: #77787b;
+            background-color: #999d9c;
         }
         .header {
             width: 100%;
@@ -22,7 +22,7 @@
 
         .header>span {
             border: none;
-            color: rgb(0,0,0);
+            color: #1a1e21;
             display: block;
             height: 100%;
             width: 30%;
@@ -59,7 +59,7 @@
 
         .header-img {
             width: 100%;
-            height: 500px;
+            height: 470px;
             margin-top: 65px;
             position: relative;
         }
@@ -75,8 +75,9 @@
         }
         .header-img>div {
             position: absolute;
-            width: 100%;
-            color: cadetblue;
+            {#width: 100%;#}
+            font-family: 微软雅黑,serif;
+            color: #1a1e21;
             width: 25px;
             height: 180px;
             text-align: center;
@@ -87,21 +88,37 @@
             margin-left: -12px;
         }
         .header-img>p>a>img {
+            border-radius: 5px;
             display: block;
             max-width: 100%;
-            max-height: 80%;
+            max-height: 100%;
             margin: auto;
+            margin-top: 30px;
+            margin-bottom: 30px;
             background-size: cover;
         }
-
         .content {
             width: 100%;
             height: 200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background-color: rgb(255,255,255,0.3);
         }
-
+        .paihangbang{
+            position: center;
+            font-family: 微软雅黑,serif;
+            color: #1a1e21;
+            width: 25px;
+            height: 30px;
+            text-align: center;
+            {#line-height: 50px;#}
+            font-size: 20px;
+            top: 50px;
+            left: 10px;
+            margin-top: 30px;
+            margin-left: 10px;
+        }
         .content>div {
             width: 20%;
             height: 200px;
@@ -109,27 +126,17 @@
             margin: auto;
             position: relative;
         }
-        .content>div:before{
-            content: "top3";/*这里可以动态数据 */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgb(0, 0, 0, 0.3);
-            float: left;
-            color: #fff;
-            text-align: center;
-            font-family: 等线, serif;
-            font-size: 20px;
-            line-height: 200px;
-        }
+
         .content>div>img {
+            border-radius: 10px;
             display: block;
             width: 100%;
             height: 100%;
             margin: auto;
             background-size: cover;
+            background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin-bottom: 25px;
         }
         .content>p {
             width: 10%;
@@ -138,6 +145,12 @@
             line-height: 100px;
             font-size:18px;
         }
+
+
+div.container {
+  text-align: center;
+  padding: 10px 20px;
+}
     </style>
 </head>
 
@@ -159,17 +172,17 @@
         <div>
             请选择你喜欢的图片
         </div>
-    </form>
+           </form>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
     <form class="content">
+        <span class="paihangbang">排行榜</span>
         {% for rank in ranks %}
-        <div>
+        <div class="content">
              <img src="/{{ rank.image }}" />
         </div>
-        <p>{{ rank.image }}</p>
-        <br>
         {% endfor %}
     </form>
 </body>

@@ -1,5 +1,7 @@
 import json
 import os
+from configparser import ConfigParser
+
 import pika
 
 
@@ -9,6 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from notifications.signals import notify
 
+from funphoto.settings import CHECKCODE_LIST
 from .forms import *
 import hashlib
 from .models import *
@@ -20,7 +23,7 @@ message = ''
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 channel.queue_declare(queue='register_list')
-
+code_list = CHECKCODE_LIST
 
 def login_check(func):
     def wrapper(req):
@@ -36,11 +39,11 @@ def register(request):
         global message
         global channel
         u = UserInfoForm()
-        captcha = gencaptcha()
+        # captcha = gencaptcha()
         dic = {
             'u':u,
             'message':message,
-            'captcha':captcha,
+            # 'captcha':captcha,
         }
         return render(request, 'register.html',dic)
     if request.method == 'POST':
@@ -48,19 +51,28 @@ def register(request):
         password = request.POST.get('password')
         password += SECRET_KEY
         passhash = hashlib.sha256(password.encode()).hexdigest()
-        sex = request.POST.get('sex')
+        # sex = request.POST.get('sex')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         phonecode = request.POST.get('phonecode')
-        cache.set(phone, phonecode, 60)
-        p_c = cache.get(phone)
-        if p_c == phonecode:
-            UserInfo.objects.create(username=user, password=passhash, sex=sex, email=email, phone=phone,
-                                    phonecode=p_c)
-            channel.basic_publish(exchange='',routing_key='register_list',body=user)
-            connection.close()
+        u = UserInfoForm()
+        # cache.set(phone, phonecode, 60)
+        # p_c = cache.get(phone)
+        print(code_list)
+        if phonecode in code_list:
+            try:
+                UserInfo.objects.create(username=user, password=passhash, email=email, phone=phone,
+                                    phonecode=phonecode)
+                channel.basic_publish(exchange='',routing_key='register_list',body=user)
+                connection.close()
+            except:
+                print('失败')
+                message = '注册失败'
+                return render(request,'register.html',locals())
         else:
-            return HttpResponse('验证码错误')
+            print('验证码错误')
+            message = '邀请码错误，请联系站长'
+            return render(request, 'register.html', locals())
         return redirect('/')
 
 def refresh_captcha(request):
@@ -123,18 +135,17 @@ def index(request):
     r_id = '%s_like_times' % userid
     times = r.get(r_id)
     if not times:
-        times = r.set(r_id, 0)
-        r.expire(r_id, 60 * 2)
+        r.set(r_id, 0,ex=60 * 60 * 24)
+        times = r.get(r_id)
     times = int(times)
     photo = Photo.objects.filter(delete=False).all().order_by('showtimes','uploadtime')
     a = 0
     r_pic = '%s_showed_pic_id'%userid
-    while r.sismember(r_pic,photo[a].id):
-        a += 1
+    # while r.sismember(r_pic,photo[a].id):
+        # a += 1
+
     r.sadd(r_pic,photo[a].id)
     r.expire(r_pic,60)
-    print(a)
-    print(r.smembers(r_pic))
     photos = [photo[a], photo[a+3]]
     id_list = [photo[a].id,photo[a+3].id]
     Photo.objects.filter(id__in=id_list).update(showtimes=F('showtimes')+1)
@@ -205,7 +216,6 @@ def like(request, photoid):
         hot_add(request,user_id,photoid)
         user = UserInfo.objects.get(id=user_id)
         reciver = UserInfo.objects.get(owner__id=photoid)
-        print(type(reciver))
         notify.send(
             user,
             recipient=reciver,
@@ -217,9 +227,8 @@ def like(request, photoid):
 
 def mynotifications(request):
     user = UserInfo.objects.get(id = request.session['id'])
-    note_read = user.notifications.read()
     note_unread = user.notifications.unread()
-    return render(request,'mynotifitions.html',locals())
+    return render(request,'mynotifications.html',locals())
 
 def change_unread(request):
     notice_id = request.GET.get('notice_id')
@@ -231,16 +240,6 @@ def change_unread(request):
         user = UserInfo.objects.get(id=request.session['id'])
         user.notifications.mark_all_as_read()
         return redirect("photo:mynotifications")
-def change_read(request):
-    notice_id = request.GET.get('notice_id')
-    if notice_id:
-        user = UserInfo.objects.get(id=request.session['id'])
-        user.notifications.filter(id=notice_id).mark_all_as_deleted()
-        return redirect("photo:mynotifications")
-    else:
-        user = UserInfo.objects.get(id=request.session['id'])
-        user.notifications.mark_all_as_deleted()
-        return redirect("photo:mynotifications")
 
 # @login_check
 def dislike(request, photoid):
@@ -249,7 +248,7 @@ def dislike(request, photoid):
     user_id = request.session.get('id')
     user = UserInfo.objects.get(id=user_id)
     photo.liker.remove(user)
-    return redirect('/index/')
+    return redirect('/mylike/')
 
 def mylike(request):
     user_id = request.session.get('id')

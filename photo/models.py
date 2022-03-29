@@ -13,7 +13,7 @@ class UserInfo(AbstractUser):
     # sex = models.CharField(choices=sex_choice,default='男',max_length=20,)
     # age = models.IntegerField(verbose_name='年龄',default=18)
     email = models.EmailField(verbose_name='电子邮箱',max_length=50)
-    phone = models.IntegerField(verbose_name='电话',unique=True)
+    phone = models.CharField(verbose_name='电话',unique=True,max_length=11)
     lastlogintime = models.DateTimeField(verbose_name='上次登录时间',blank=True,null=True)
     registertime = models.DateTimeField(verbose_name='注册时间',auto_now=True)
     phonecode = models.IntegerField(verbose_name='短信验证码',null=True)

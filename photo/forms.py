@@ -14,7 +14,7 @@ class UserInfoForm(forms.Form):
     #                         )
     email = forms.EmailField(label='邮箱', max_length=50,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
-    phone = forms.IntegerField(label='电话',
+    phone = forms.CharField(label='电话',
                                widget=forms.NumberInput(attrs={'class': 'form-control'}))
     # captcha = CaptchaField(label='验证码',)
     #                        # widget=forms.TextInput(attrs={'class': 'form-control'}))
