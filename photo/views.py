@@ -207,7 +207,7 @@ def like(request, photoid):
         r = get_redis()
         r_id = '%s_like_times' % request.session.get('id')
         times = r.get(r_id)
-        if int(times) > 10:
+        if int(times) > 30:
             return HttpResponse('您今天点赞超过三十次，24小时后继续')
         r.incr('%s_like_times' % request.session.get('id'), 1)
         Photo.objects.filter(id=photoid).all().update(likenum=F('likenum') + 1)

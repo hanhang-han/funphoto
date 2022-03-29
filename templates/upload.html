@@ -6,38 +6,90 @@
 	<title>Title</title>
 	<link rel="stylesheet" href="../static/css/index.css">
 	<style>
+                body{
+            background-color: #999d9c;
+        }
+        .header {
+            width: 100%;
+            height: 65px;
+            {#background-image: url("../static/The-USA-in-10-Iconic-Images-back.jpg");#}
+            background-color: rgb(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+                .header>div {
+            width: 20%;
+            height: 70%;
+            float: left;
+            display: flex;
+            justify-content: space-evenly;
+            font-size: 15px;
+            font-weight: 400;
+        }
+                        .header>div:nth-child(2) {
+            width: 30%;
+            float: right;
+        }
+
+        .header div a {
+            text-decoration: none;
+            color: #fff;
+            text-align: center;
+            line-height: 65px;
+        }
+
+        .header>div>a:hover {
+            border-bottom: 1px solid #fff;
+        }
 		div {
 			width: 100%;
 			overflow: hidden;
 		}
 
 		div>form {
-			width: 70%;
+			width: 100%;
 			height: 600px;
-			margin: 65px auto 0;
+			margin-top: 80px;
+            margin-left: 600px;
 		}
 		#submit{
+            margin-top: 30px;
 			display: block;
-			width: 100px;
-			height: 40px;
+			width: 180px;
+			height: 30px;
 			border: none;
 			border-radius: 5px;
 			background-color: rgb(49, 108, 244);
 			color: #fff;
 			transition: all 0.2s;
 		}
-		#submit:hover{
-			transform: translateY(-1px);
-			box-shadow:1px 2px 6px 0px rgb(49 108 244);
-		}
+
+        }
+		{##submit:hover{#}
+		{#	transform: translateY(-1px);#}
+		{#	box-shadow:1px 2px 6px 0px rgb(49 108 244);#}
+		{#}#}
 	</style>
 </head>
 
 <body>
+    <div class="header">
+        <div>
+            <a href="{% url 'photo:index' %}">首页</a>
+            <a href="{% url 'photo:uploadphoto' %}">上传图片</a>
+        </div>
+        <div>
+            <a href="{% url 'photo:mylike' %}">我的喜欢</a>
+            <a href="{% url 'photo:mynotifications' %}">我的消息</a>
+            <a href="{% url 'photo:logout' %}">登出</a>
+        </div>
+    </div>
 	<div>
 		<form method='post' enctype="multipart/form-data" action="/uploadphoto/">
 			{% csrf_token %} {# 【2】post上传别忘记带上验证标识 #}
-			<input type="file" name="photo"><br />
+			<input type="file" name="photo">
 			<input type="submit" value="上传" id="submit">
 		</form>
 	</div>

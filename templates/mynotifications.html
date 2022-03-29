@@ -5,10 +5,18 @@
     <title>Title</title>
     <link rel="stylesheet" href="../static/css/index.css">
     <style>
+        body{
+            background-color: #999d9c;
+        }
         .header {
             width: 100%;
             height: 65px;
-            background-color: rgb(0, 0, 0, 0.8);
+            {#background-image: url("../static/The-USA-in-10-Iconic-Images-back.jpg");#}
+            background-color: rgb(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
         .header>div {
@@ -38,12 +46,14 @@
         }
         .content {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 65px;
         }
 
         .content>div {
             width: 60%;
-            margin: auto;
+            margin-top: 65px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .content>div>img {
             display: block;
@@ -67,7 +77,9 @@
             font-size:18px;
         }
         .content>div>p>a {
-            color: rgb(145, 144, 144);
+            color: #464547;
+            line-height: 65px;
+
         }
     </style>
 </head>
@@ -79,13 +91,13 @@
         </div>
         <div>
             <a href="{% url 'photo:mylike' %}">我的喜欢</a>
-            <a href="{% url 'photo:mynotifications' %}">我的消息</a>
+            <a href="{% url 'photo:ownspace' %}">个人空间</a>
             <a href="{% url 'photo:logout' %}">登出</a>
         </div>
     </div>
 <div class="content">
     <div>
-            <p>
+        <p>
         <a href="{% url 'photo:change_unread' %}" >一键全读</a>
     </p>
 
